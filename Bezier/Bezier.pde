@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 ArrayList<LL> curves = new ArrayList<LL>();
+LL displayCrv = new LL();
+String crvName;
 String modes[] = {"move", "add", "delete", "new"}; 
 int currentMode = 0;
 int currentCurve = -1;
@@ -19,6 +21,7 @@ void setup(){
   
   File folder = new File(sketchPath()+"/bezier_data");
   File folder2 = new File(sketchPath()+"/approx_data");
+  File folder3 = new File(sketchPath()+"/fitting_result");
   File[] files = folder.listFiles(new FilenameFilter() {
     public boolean accept(File dir, String name) {
         return (name.toLowerCase().endsWith(".dat"));
@@ -29,12 +32,20 @@ void setup(){
         return (name.toLowerCase().endsWith(".crv"));
     }
   });
-  String listOfFiles[] = new String[files.length+files2.length];
+  File[] files3 = folder3.listFiles(new FilenameFilter() {
+    public boolean accept(File dir, String name) {
+        return (name.toLowerCase().endsWith(".itd"));
+    }
+  });
+  
+  String listOfFiles[] = new String[files.length+files2.length+files3.length];
   
   for (int i = 0; i < files.length; i++) 
     listOfFiles[i] = files[i].getName();
   for (int i = 0; i < files2.length; i++) 
     listOfFiles[i+files.length] = files2[i].getName();
+  for (int i = 0; i < files3.length; i++) 
+    listOfFiles[i+files.length+files2.length] = files3[i].getName();
   
   /* add a ScrollableList, by default it behaves like a DropdownList */
   
@@ -67,6 +78,7 @@ void draw(){
   stroke(100);
   
   displayCurve();
+  displayCrvCurve();
   popMatrix();
   
   //line(width/2-10, height/2+10, width/2+10, height/2+10);
@@ -74,6 +86,19 @@ void draw(){
   
 }
 
+void displayCrvCurve(){
+  Node temp = displayCrv.head;
+  if(temp != null)
+    ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 2, 2);
+  while(temp != null){
+    if(temp.next != null){
+      line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
+      drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));
+      ellipse(drawingScale(temp.next.x, false), drawingScale(temp.next.y, true), 2, 2);
+    }
+    temp = temp.next;
+  }
+}
 
 void displayCurve(){
   if(curves.size() > 0){
@@ -108,16 +133,19 @@ void drawControlPoly(){
   if(currentMode == 1)
     displayActionEdgeNode();
     
+  //println(curves.size());
+    
   for (int j = 0 ; j < curves.size(); j++) {
      Node temp = curves.get(j).head;
      stroke(200);
      if(j == currentCurve) stroke(0,255,0);
+     //println("in curve "+j);
      while(temp != null){
        //if(temp == curves.get(j).head) {fill(255,0,0);} else
        //if(temp == curves.get(j).tail) {fill(0,255,0);} else {noFill();}
        if(ctrlOn == 1)
          ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
-       //println(temp.x +" "+ temp.y);
+       //println("poly: "+temp.x +" "+ temp.y);
        if((temp.next != null) && (polyOn == 1)){
          line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
          drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));

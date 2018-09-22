@@ -23,6 +23,12 @@ class LL{
       size--;
   }
   
+  void empty(){
+    while(this.size>0){
+      this.delete(tail);
+    }
+  }
+  
   void add(float inX, float inY){
     Node newNode = new Node(inX, inY);
     if(head == null){
