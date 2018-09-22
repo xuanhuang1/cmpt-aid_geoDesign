@@ -1,9 +1,13 @@
+import java.io.File;
 
 void dropdown(int n) {
   /* request the selected item based on index n */
   String name  = cp5.get(ScrollableList.class, "dropdown").getItem(n).get("name").toString();
   //println(n, name);
-  readFile("bezier_data/"+name);
+  if(name.toLowerCase().endsWith(".dat"))
+    readFile("bezier_data/"+name);
+  if(name.toLowerCase().endsWith(".crv"))
+    readFile("approx_data/"+name);
   /* here an item is stored as a Map  with the following key-value pairs:
    * name, the given name of the item
    * text, the given text of the item by default the same as name

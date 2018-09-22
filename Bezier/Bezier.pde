@@ -17,15 +17,23 @@ void setup(){
   noFill();
   
   File folder = new File(sketchPath()+"/bezier_data");
+  File folder2 = new File(sketchPath()+"/approx_data");
   File[] files = folder.listFiles(new FilenameFilter() {
     public boolean accept(File dir, String name) {
-        return name.toLowerCase().endsWith(".dat");
+        return (name.toLowerCase().endsWith(".dat"));
     }
   });
-  String listOfFiles[] = new String[files.length];
+  File[] files2 = folder2.listFiles(new FilenameFilter() {
+    public boolean accept(File dir, String name) {
+        return (name.toLowerCase().endsWith(".crv"));
+    }
+  });
+  String listOfFiles[] = new String[files.length+files2.length];
   
   for (int i = 0; i < files.length; i++) 
     listOfFiles[i] = files[i].getName();
+  for (int i = 0; i < files2.length; i++) 
+    listOfFiles[i+files.length] = files2[i].getName();
   
   /* add a ScrollableList, by default it behaves like a DropdownList */
   
