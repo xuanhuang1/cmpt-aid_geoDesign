@@ -69,6 +69,22 @@ void keyPressed() {
     background(255);
     curves.clear();
   } 
+  if (key == 'p') 
+    polyOn = 1-polyOn;
+  if (key == 'b') 
+    bCurveOn = 1-bCurveOn;
+  if (key == 'c') 
+    ctrlOn = 1-ctrlOn;
+  if (key == 'a'){
+    ctrlOn = 1;
+    bCurveOn = 1;
+    polyOn = 1;
+  }
+  if (key == 'n'){
+    ctrlOn = 0;
+    bCurveOn = 0;
+    polyOn = 0;
+  }
 }
 
 boolean mouseAroundMenu(){

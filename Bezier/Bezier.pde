@@ -9,6 +9,7 @@ int currentMode = 0;
 int currentCurve = -1;
 ControlP5 cp5; // you always need the main class
 int stepsCount = 100;
+int ctrlOn=1, polyOn=1, bCurveOn=1;
 
 void setup(){
   size(1200, 800);
@@ -66,10 +67,6 @@ void draw(){
   stroke(100);
   
   displayCurve();
-  if((currentMode == 0) || (currentMode == 2))
-    displayActionNode();
-  if(currentMode == 1)
-    displayActionEdge();
   popMatrix();
   
   //line(width/2-10, height/2+10, width/2+10, height/2+10);
@@ -79,7 +76,6 @@ void draw(){
 
 
 void displayCurve(){
-  
   if(curves.size() > 0){
     drawControlPoly();
     drawCurvePoints();
@@ -87,6 +83,7 @@ void displayCurve(){
 }
 
 void drawCurvePoints(){
+  if(bCurveOn == 0) return;
   for (int i = 0 ; i < curves.size(); i++) {
     if(curves.get(i).size > 0){
       stroke(0);
@@ -105,6 +102,12 @@ void drawCurvePoints(){
 }
 
 void drawControlPoly(){
+  if((currentMode == 0) || (currentMode == 2))
+    displayActionNode();
+  
+  if(currentMode == 1)
+    displayActionEdgeNode();
+    
   for (int j = 0 ; j < curves.size(); j++) {
      Node temp = curves.get(j).head;
      stroke(200);
@@ -112,9 +115,10 @@ void drawControlPoly(){
      while(temp != null){
        //if(temp == curves.get(j).head) {fill(255,0,0);} else
        //if(temp == curves.get(j).tail) {fill(0,255,0);} else {noFill();}
-       ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
+       if(ctrlOn == 1)
+         ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
        //println(temp.x +" "+ temp.y);
-       if(temp.next != null){
+       if((temp.next != null) && (polyOn == 1)){
          line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
          drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));
        }
@@ -135,7 +139,7 @@ void displayActionNode(){
     }
 }
 
-void displayActionEdge(){
+void displayActionEdgeNode(){
   if(curves.size()>0){
       Node theNode = getClosestEdgeNode();
       if(theNode != null){  
