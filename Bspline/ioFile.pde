@@ -1,4 +1,4 @@
-
+int writeCount = 0;
 boolean linetoskip(String s){
   if(s.trim().isEmpty()) return true;
   if(s.charAt(0) == '#') return true;
@@ -61,18 +61,21 @@ int readFile(String fileName){
 }
 
 int writeFile(){
-  String wrtName = "xuanhuang_"+"_outfile.itd";
-  println("writing from crv: "+" to "+wrtName);
+  String wrtName = "xuanhuang_"+writeCount+"_outfile.dat";
+  println("writing to "+wrtName);
   String output = "";
-  output += "#written data ";
+  output += "#written data ,";
   output += curves.size()+" ,";
   for(int i=0;i<curves.size();i++){
-    output += "P "+curves.get(i).size+" ,";
+    output += curves.get(i).degree+" ,";
+    output += curves.get(i).size+" ,";
     Node temp = curves.get(i).head;
     while(temp != null){
       output += temp.x + " "+ temp.y +" ,";
       temp = temp.next;
     }
+    output += "1 ,";
+    output += curves.get(i).getTString() + ",";
   }
   String[] list = split(output, ',');
   

@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 ArrayList<LL> curves = new ArrayList<LL>();
-String modes[] = {"move", "delete", "new"}; 
+LL tempNewCurve;
+String modes[] = {"move", "delete", "3D view"}; 
 int currentMode = 0;
 int currentCurve = -1;
 ControlP5 cp5; // you always need the main class
 int stepsCount = 200;
 int ctrlOn=1, polyOn=1, bCurveOn=1;
+float[] cameraAttr = {PI/4.0, width/30.0, width*2,  0,0,0, 0,1,0};
 
 void setup(){
   size(1200, 800, P3D);
@@ -19,7 +21,7 @@ void setup(){
   
   File[] folders = {new File(sketchPath()+"/BsplineData/Bspline2DData"),
                     new File(sketchPath()+"/BsplineData/Bspline3DdispData"),
-                    new File(sketchPath()+"/fitting_result")};
+                    new File(sketchPath()+"/BsplineData/fitting_result")};
                     
   File[][] files= new File[folders.length][];
   int filesLen = 0;
@@ -41,6 +43,8 @@ void setup(){
       count ++;
     }
   }
+  
+  tempNewCurve = null;
   /* add a ScrollableList, by default it behaves like a DropdownList */
   
   cp5 = new ControlP5(this);
@@ -70,17 +74,24 @@ void setup(){
 void draw(){  
   background(255);
   // move origin to center
+  if(currentMode == 2){
+  camera(cos(cameraAttr[0])*cameraAttr[2],cameraAttr[1], sin(cameraAttr[0])*cameraAttr[2], 
+      cameraAttr[3],cameraAttr[4],cameraAttr[5],
+      cameraAttr[6],cameraAttr[7],cameraAttr[8]);
+  }
+  else camera();
   pushMatrix();
-  translate(width/2, height/2);
+  if(currentMode != 2)
+    translate(width/2, height/2);
   //rotateX(PI/8);
   //rotateY(PI/8);
-  box(100);
+  //box(100);
   stroke(200,0,0);
   line(-width/2,0, width/2, 0);
   stroke(0,200,0);
   line(0,-height/2,0, height/2);
   stroke(0,0,200);
-  line(0,0,-100,0, 0,200);
+  line(0,0,-400,0, 0,30);
   stroke(100);
   displayCurve();
   //println();
@@ -98,6 +109,9 @@ void displayCurve(){
     drawControlPoly();
     drawCurvePoints();
   }
+  if(tempNewCurve != null){
+    drawTempNewCurve();
+  }
 }
 
 void drawCurvePoints(){
@@ -111,12 +125,40 @@ void drawCurvePoints(){
         float t2 = (j+1)/(stepsCount+0.0);
         xyzPair thePoint1 = pointOnCurve(t1, i);
         xyzPair thePoint2 = pointOnCurve(t2, i);
-        line(drawingScale(thePoint1.x, false), drawingScale(thePoint1.y, true), drawingScale(thePoint1.z,false),
-         drawingScale(thePoint2.x, false), drawingScale(thePoint2.y, true), drawingScale(thePoint2.z, false));
+        line(drawingScale(thePoint1.x, false), drawingScale(thePoint1.y, true), drawingScale(thePoint1.z,true),
+         drawingScale(thePoint2.x, false), drawingScale(thePoint2.y, true), drawingScale(thePoint2.z, true));
       }
       stroke(0);
     }
   }
+}
+
+void drawTempNewCurve(){
+  Node temp = tempNewCurve.head;
+  stroke(200);
+  while(temp != null){
+    if(ctrlOn == 1)
+       ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
+    if((temp.next != null) && (polyOn == 1)){
+       line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
+       drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));
+    }
+    temp = temp.next;
+  }
+  stroke(200);
+  if(tempNewCurve.degree < 1) return;
+  if(tempNewCurve.size < tempNewCurve.degree+1) return;
+  
+  stroke(0);
+  for (int j = 0 ; j < stepsCount; j++) {
+    float t1 = j/(stepsCount+0.0);
+    float t2 = (j+1)/(stepsCount+0.0);
+    xyzPair thePoint1 = ctAlgo(t1, tempNewCurve);
+    xyzPair thePoint2 = ctAlgo(t2, tempNewCurve);
+    line(drawingScale(thePoint1.x, false), drawingScale(thePoint1.y, true),
+         drawingScale(thePoint2.x, false), drawingScale(thePoint2.y, true));
+  }
+  stroke(0);
 }
 
 void drawControlPoly(){
@@ -136,12 +178,20 @@ void drawControlPoly(){
      while(temp != null){
        //if(temp == curves.get(j).head) {fill(255,0,0);} else
        //if(temp == curves.get(j).tail) {fill(0,255,0);} else {noFill();}
-       if(ctrlOn == 1)
-         ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
+       if(ctrlOn == 1){
+         if(currentMode != 2)
+           ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true),10, 10);
+         else{
+           pushMatrix();
+           translate(drawingScale(temp.x, false), drawingScale(temp.y, true), drawingScale(temp.z, true));
+           sphere(1);
+           popMatrix();
+         }
+       }
        //println("poly: "+temp.x +" "+ temp.y);
        if((temp.next != null) && (polyOn == 1)){
-         line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
-         drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));
+         line(drawingScale(temp.x, false), drawingScale(temp.y, true),drawingScale(temp.z,true), 
+         drawingScale(temp.next.x, false), drawingScale(temp.next.y,true),drawingScale(temp.next.z,true));
        }
        temp = temp.next;
      }

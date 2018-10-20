@@ -5,7 +5,7 @@ xyzPair pointOnCurve(float t, int curveIndex){
     return null;
   }
   int n = theCurve.size - 1;
-  xyzPair result = ctAlgo(n, t, theCurve);
+  xyzPair result = ctAlgo(t, theCurve);
   //return result;
   return result;
 }
@@ -35,7 +35,7 @@ xyzPair interpolate(xyzPair a, xyzPair b, float t_c, int k, int p, int i, float[
   return null;//new xyzPair((t-t[i])/()*a.x+t*b.x, (1-t)*a.y+t*b.y , (1-t)*a.z+t*b.z );
 }
 
-xyzPair ctAlgo(int n, float t, LL curve){
+xyzPair ctAlgo(float t, LL curve){
   //println("alg, t:", t);
   xyzPair points[] = new xyzPair[curve.size];
   Node cNode = curve.head;

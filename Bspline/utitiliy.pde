@@ -1,5 +1,5 @@
 import java.util.*;
-
+float edgeDistTole = 0.2, nodeDistTole = 0.5;
 
 Node getClosestNode(){
   if(curves.size()<1) return null;
@@ -21,7 +21,7 @@ Node getClosestNode(){
      }
   }
   //println(mouseX, mouseY, drawingScale(theNode.x, false), drawingScale(theNode.y, true));
-  if(dist < 0.5){
+  if(dist < nodeDistTole){
     currentCurve = tempCurve;
     return theNode;
   }
@@ -56,7 +56,7 @@ Node getClosestEdgeNode(){
      }
   }
   //println(mouseX, mouseY, drawingScale(theNode.x, false), drawingScale(theNode.y, true));
-  if(dist < 0.2){
+  if(dist < edgeDistTole){
     currentCurve = tempCurve;
     return theNode;
   }

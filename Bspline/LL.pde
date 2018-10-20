@@ -9,6 +9,7 @@ class LL{
     tail = null;
     size = 0;
     is3D = false;
+    degree = -1;
   }
   
   void delete(Node node){
@@ -51,6 +52,13 @@ class LL{
       tail = newNode;
     }
     size++;
+    //println("add");
+  }
+  
+  void insert(float inX, float inY, float inZ){
+    add(inX, inY, inZ);
+    t = increT(t, degree, t.length - 1 - degree);
+    //println("-insert");
   }
   
   void insertBefore(Node node, float inX, float inY, float inZ){
@@ -80,5 +88,12 @@ class LL{
     for(int i=0;i<t.length;i++)
       print(t[i]+" ");
       println();
+  }
+  
+  String getTString(){
+    String a="";
+    for(int i=0;i<t.length;i++)
+      a+=t[i]+" ";
+    return a;
   }
 }

@@ -14,8 +14,8 @@ float[] increT(float []t, int degree, int ctrlPs){
   float newItems[] = new float[t.length+1];
   if(t[0] == t[1]) fillInModifiedOpenKnotV(newItems, degree,ctrlPs+1);
   else fillInUniformFloatKnotV(newItems, degree,ctrlPs+1);
-  println("the incremented v is:");
-  println(newItems);
+  //println("the incremented v is:");
+  //println(newItems);
   return newItems;
 }
 
@@ -25,7 +25,7 @@ float[] decreT(float []t, int degree, int ctrlPs){
   float newItems[] = new float[t.length-1];
   if(t[0] == t[1]) fillInModifiedOpenKnotV(newItems, degree,ctrlPs-1);
   else fillInUniformFloatKnotV(newItems, degree,ctrlPs-1);
-  println("the decremented v is:");
-  println(newItems);
+  //println("the decremented v is:");
+  //println(newItems);
   return newItems;
 }
