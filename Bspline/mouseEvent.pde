@@ -62,7 +62,8 @@ void mouseClicked() {
       if((tempNewCurve.size == tempNewCurve.degree+1) && (tempNewCurve.t == null)){
         tempNewCurve.t = new float[tempNewCurve.degree*2+2];
         //println(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
-        fillInModifiedOpenKnotV(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
+        if(newCurveType == 0) fillInModifiedOpenKnotV(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
+        if(newCurveType == 1) fillInUniformFloatKnotV(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
         return;
       }
       if(tempNewCurve.size > tempNewCurve.degree){
@@ -129,11 +130,28 @@ void keyPressed() {
     polyOn = 0;
   }
   if (key == 'i'){
-    cameraAttr[2] -= 10;
-    if(cameraAttr[2] < 10) cameraAttr[0] = 10;
+    if(currentMode == 2){
+      cameraAttr[2] -= 10;
+      if(cameraAttr[2] < 10) cameraAttr[0] = 10;
+    }
   }
   if (key == 'o'){
-    cameraAttr[2] += 10;
+    if(currentMode == 2)
+      cameraAttr[2] += 10;
+  }
+  
+  if (key == 't'){
+    newCurveType = 1-newCurveType;
+    print("create with:");
+    if(newCurveType == 0){ println("Modified Open");}
+    if(newCurveType == 1){ println("Floating");}
+    
+    if(tempNewCurve == null) return;
+    if(tempNewCurve.t == null) return;
+    
+    if(newCurveType == 0) fillInModifiedOpenKnotV(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
+    if(newCurveType == 1) fillInUniformFloatKnotV(tempNewCurve.t, tempNewCurve.degree, tempNewCurve.size);
+      
   }
   
   

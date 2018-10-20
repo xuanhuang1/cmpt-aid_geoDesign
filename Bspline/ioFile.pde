@@ -1,4 +1,4 @@
-int writeCount = 0;
+int writeCount = 2;
 boolean linetoskip(String s){
   if(s.trim().isEmpty()) return true;
   if(s.charAt(0) == '#') return true;
@@ -38,19 +38,23 @@ int readFile(String fileName){
         the_scan_line.close(); 
       }
       else if(controlPoly<0){
+        
+        println("in pooints: "+controlPoly+" at "+lines[i]);
         Scanner the_scan_line = new Scanner(lines[i]);
         controlPoly = the_scan_line.nextInt();
         the_scan_line.close(); 
+        //println("pooints: "+controlPoly+" at "+i);
       }
       else if((degree > 0) && (controlPoly>0)){
         println("curve degree:"+degree+" ctrl points:"+controlPoly);
         //println("currentCurve "+currentCurve);
         int lineCount = addCurve(lines, i, currentCurve, degree, controlPoly);
         //println(curves.get(0).head.x);
-        i += lineCount;
+        i += lineCount-1;
         currentCurve++;
         degree = -1;
         controlPoly = -1;
+        println("end curve["+(currentCurve-1)+"] at line",i);
       }
     }//else{println("empty:"+i);}
     i++;
@@ -78,8 +82,9 @@ int writeFile(){
     output += curves.get(i).getTString() + ",";
   }
   String[] list = split(output, ',');
+  writeCount+=1;
   
-  saveStrings("fitting_result/"+wrtName, list);
+  saveStrings("BsplineData/fitting_result/"+wrtName, list);
   return 1;
 }
 

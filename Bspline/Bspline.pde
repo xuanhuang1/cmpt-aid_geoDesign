@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 
 ArrayList<LL> curves = new ArrayList<LL>();
 LL tempNewCurve;
+int newCurveType = 0;
 String modes[] = {"move", "delete", "3D view"}; 
 int currentMode = 0;
 int currentCurve = -1;
