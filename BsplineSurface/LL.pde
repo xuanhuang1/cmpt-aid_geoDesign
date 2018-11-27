@@ -91,8 +91,8 @@ class LL{
   }
   
   void printT(){
-    for(int i=0;i<t.length;i++)
-      print(t[i]+" ");
+    for(int i=0;i<u.length;i++)
+      print(u[i]+" ");
       println();
   }
   

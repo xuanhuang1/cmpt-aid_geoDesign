@@ -48,10 +48,10 @@ int readFile(String fileName){
       }else if(surfaces.get(currentSurface).v == null){
         getKVector(lines[i], currentSurface, surfaces.get(currentSurface).degreeV, lengthV, false);
       }else {
-        surfaces.get(currentSurface).sizeU = (lengthU - surfaces.get(currentSurface).degreeU+1);
-        surfaces.get(currentSurface).sizeV = (lengthV - surfaces.get(currentSurface).degreeV+1);
+        surfaces.get(currentSurface).sizeU = (lengthU - surfaces.get(currentSurface).degreeU-1);
+        surfaces.get(currentSurface).sizeV = (lengthV - surfaces.get(currentSurface).degreeV-1);
         println("There should be "+ surfaces.get(currentSurface).sizeU,"x",surfaces.get(currentSurface).sizeV+" points");
-        i += addControlPoints(lines, i, currentSurface, (lengthU - surfaces.get(currentSurface).degreeU+1)*(lengthV - surfaces.get(currentSurface).degreeV+1));
+        i += addControlPoints(lines, i, currentSurface, surfaces.get(currentSurface).sizeU*surfaces.get(currentSurface).sizeV);
         lengthU = -1;
         lengthV = -1;
     }

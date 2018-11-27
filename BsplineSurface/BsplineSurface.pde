@@ -4,13 +4,12 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 ArrayList<LL> surfaces = new ArrayList<LL>();
-LL tempNewCurve;
-int newCurveType = 0;
 String modes[] = {"move", "delete", "3D view"}; 
 int currentMode = 0;
 int currentCurve = -1;
 ControlP5 cp5; // you always need the main class
-int stepsCount = 200;
+int gridNum = 10;
+int gridResolution = 10;
 int ctrlOn=1, polyOn=1, bCurveOn=1;
 float[] cameraAttr = {PI/4.0, width/30.0, width*2,  0,0,0, 0,1,0};
 
@@ -45,7 +44,7 @@ void setup(){
     }
   }
   
-  tempNewCurve = null;
+
   /* add a ScrollableList, by default it behaves like a DropdownList */
   
   cp5 = new ControlP5(this);
@@ -94,7 +93,7 @@ void draw(){
   stroke(0,0,200);
   line(0,0,-400,0, 0,30);
   stroke(100);
-  displayCurve();
+  displaySurface();
   //println();
   popMatrix();
   
@@ -105,62 +104,54 @@ void draw(){
 
 
 
-void displayCurve(){
+void displaySurface(){
   if(surfaces.size() > 0){
     drawControlPoly();
-    //drawCurvePoints();
-  }
-  if(tempNewCurve != null){
-    //drawTempNewCurve();
+    drawSurfacePoints();
   }
 }
 
-void drawCurvePoints(){
+void drawSurfacePoints(){
   if(bCurveOn == 0) return;
   for (int i = 0 ; i < surfaces.size(); i++) {
     if(surfaces.get(i).size > 0){
       stroke(0);
       if(i == currentCurve) stroke(0,0,255);
-      for (int j = 0 ; j < stepsCount; j++) {
-        float t1 = j/(stepsCount+0.0);
-        float t2 = (j+1)/(stepsCount+0.0);
-        xyzPair thePoint1 = pointOnCurve(t1, i);
-        xyzPair thePoint2 = pointOnCurve(t2, i);
-        line(drawingScale(thePoint1.x, false), drawingScale(thePoint1.y, true), drawingScale(thePoint1.z,true),
-         drawingScale(thePoint2.x, false), drawingScale(thePoint2.y, true), drawingScale(thePoint2.z, true));
+      int stepCounts = gridNum*gridResolution;
+      for (int j = 0 ; j < stepCounts; j++) {
+        float tu1 = j/(stepCounts+0.0);
+        float tu2 = (j+1)/(stepCounts+0.0);
+        for (int k = 0 ; k < stepCounts; k++) {
+          float tv1 = k/(stepCounts+0.0);
+          float tv2 = (k+1)/(stepCounts+0.0);
+          xyzPair thePoint1 = pointOnCurve(tu1,tv1, i);
+          xyzPair thePoint2 = pointOnCurve(tu2,tv1, i);
+          xyzPair thePoint3 = pointOnCurve(tu1,tv2, i);
+          if(k % gridResolution == 0)
+            drawLinePiece(thePoint1, thePoint2);
+          if(j % gridResolution == 0)
+            drawLinePiece(thePoint1, thePoint3);
+          if(k == stepCounts -1){
+            xyzPair thePoint4 = pointOnCurve(tu2,tv2, i);
+            drawLinePiece(thePoint3, thePoint4);
+          }
+          if(j == stepCounts -1){
+            xyzPair thePoint4 = pointOnCurve(tu2,tv2, i);
+            drawLinePiece(thePoint2, thePoint4);
+          }
+            
+        }
       }
       stroke(0);
     }
   }
 }
 
-void drawTempNewCurve(){
-  Node temp = tempNewCurve.head;
-  stroke(200);
-  while(temp != null){
-    if(ctrlOn == 1)
-       ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true), 10, 10);
-    if((temp.next != null) && (polyOn == 1)){
-       line(drawingScale(temp.x, false), drawingScale(temp.y, true), 
-       drawingScale(temp.next.x, false), drawingScale(temp.next.y, true));
-    }
-    temp = temp.next;
-  }
-  stroke(200);
-  if(tempNewCurve.degree < 1) return;
-  if(tempNewCurve.size < tempNewCurve.degree+1) return;
-  
-  stroke(0);
-  for (int j = 0 ; j < stepsCount; j++) {
-    float t1 = j/(stepsCount+0.0);
-    float t2 = (j+1)/(stepsCount+0.0);
-    xyzPair thePoint1 = ctAlgo(t1, tempNewCurve);
-    xyzPair thePoint2 = ctAlgo(t2, tempNewCurve);
-    line(drawingScale(thePoint1.x, false), drawingScale(thePoint1.y, true),
-         drawingScale(thePoint2.x, false), drawingScale(thePoint2.y, true));
-  }
-  stroke(0);
+void drawLinePiece(xyzPair a, xyzPair b){
+  line(drawingScale(a.x, false), drawingScale(a.y, true), drawingScale(a.z,true),
+           drawingScale(b.x, false), drawingScale(b.y, true), drawingScale(b.z, true));
 }
+
 
 void drawControlPoly(){
   if((currentMode == 0) || (currentMode == 1))

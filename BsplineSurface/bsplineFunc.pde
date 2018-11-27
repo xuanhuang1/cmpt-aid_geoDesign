@@ -1,11 +1,10 @@
-xyzPair pointOnCurve(float t, int curveIndex){
+xyzPair pointOnCurve(float tu, float tv, int curveIndex){
   LL theCurve = surfaces.get(curveIndex);
   if(theCurve.size == 0){
     println("null curve at:", curveIndex);
     return null;
   }
-  int n = theCurve.size - 1;
-  xyzPair result = ctAlgo(t, theCurve);
+  xyzPair result = ctAlgo(tu, tv, theCurve);
   //return result;
   return result;
 }
@@ -35,7 +34,7 @@ xyzPair interpolate(xyzPair a, xyzPair b, float t_c, int k, int p, int i, float[
   return null;//new xyzPair((t-t[i])/()*a.x+t*b.x, (1-t)*a.y+t*b.y , (1-t)*a.z+t*b.z );
 }
 
-xyzPair ctAlgo(float tu, LL curve){
+xyzPair ctAlgo(float tu, float tv, LL curve){
   //println("alg, t:", t);
   xyzPair points[] = new xyzPair[curve.size];
   Node cNode = curve.head;
@@ -48,15 +47,21 @@ xyzPair ctAlgo(float tu, LL curve){
   //println("t "+t+" J: "+getJ(t, curve.t, curve.degree));
 
   int ku = curve.degreeU, kv = curve.degreeV;
-  int Ju = getJ(tu, curve.u, curve.degreeU);
+  int Ju = getJ(tu, curve.u, curve.degreeU), Jv = getJ(tv, curve.v, curve.degreeV);
+  //print(tu,ku,":",Ju ," ");
+  //curve.printT();
   xyzPair res = new xyzPair(0,0,0);
-  for(int m=Ju-ku; m<Ju+1;m++){
-    float B = getBasis(tu,m,ku,curve.u);
-    //println(t, "getJ",J+" B_"+m+"^"+k,B);
-    if(B == 0) continue;
-    res.x += points[m].x*B;
-    res.y += points[m].y*B;
-    res.z += points[m].z*B;
+  for(int n=Jv-kv; n<Jv+1;n++){
+    float N = getBasis(tv,n,kv,curve.v);
+    if(N == 0) continue;
+    for(int m=Ju-ku; m<Ju+1;m++){
+      float B = getBasis(tu,m,ku,curve.u);
+      //println(t, "getJ",J+" B_"+m+"^"+k,B);
+      if(B == 0) continue;
+      res.x += points[n*curve.sizeU+m].x*B*N;
+      res.y += points[n*curve.sizeU+m].y*B*N;
+      res.z += points[n*curve.sizeU+m].z*B*N;
+    }
   }
   return res;
 }
