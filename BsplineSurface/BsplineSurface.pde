@@ -8,8 +8,8 @@ String modes[] = {"move", "delete", "3D view"};
 int currentMode = 0;
 int currentCurve = -1;
 ControlP5 cp5; // you always need the main class
-int gridNum = 10;
-int gridResolution = 10;
+int gridNum = 50;
+int gridResolution = 5;
 int ctrlOn=1, polyOn=1, bCurveOn=1;
 float[] cameraAttr = {PI/4.0, width/30.0, width*2,  0,0,0, 0,1,0};
 
@@ -118,12 +118,14 @@ void drawSurfacePoints(){
       stroke(0);
       if(i == currentCurve) stroke(0,0,255);
       int stepCounts = gridNum*gridResolution;
+      float maxU = surfaces.get(i).u[surfaces.get(i).u.length-surfaces.get(i).degreeU-1];
+      float maxV = surfaces.get(i).v[surfaces.get(i).v.length-surfaces.get(i).degreeV-1];
       for (int j = 0 ; j < stepCounts; j++) {
-        float tu1 = j/(stepCounts+0.0);
-        float tu2 = (j+1)/(stepCounts+0.0);
+        float tu1 = j/(stepCounts+0.0)*maxU;
+        float tu2 = (j+1)/(stepCounts+0.0)*maxU;
         for (int k = 0 ; k < stepCounts; k++) {
-          float tv1 = k/(stepCounts+0.0);
-          float tv2 = (k+1)/(stepCounts+0.0);
+          float tv1 = k/(stepCounts+0.0)*maxV;
+          float tv2 = (k+1)/(stepCounts+0.0)*maxV;
           xyzPair thePoint1 = pointOnCurve(tu1,tv1, i);
           xyzPair thePoint2 = pointOnCurve(tu2,tv1, i);
           xyzPair thePoint3 = pointOnCurve(tu1,tv2, i);
@@ -167,11 +169,12 @@ void drawControlPoly(){
      stroke(200);
      if(j == currentCurve) stroke(0,255,0);
      //println("in curve "+j);
+     int countOnCurve = 0;
      while(temp != null){
        //if(temp == surfaces.get(j).head) {fill(255,0,0);} else
        //if(temp == surfaces.get(j).tail) {fill(0,255,0);} else {noFill();}
        if(ctrlOn == 1){
-         if(currentMode != 2)
+         if(currentMode != 2)  
            ellipse(drawingScale(temp.x, false), drawingScale(temp.y, true),10, 10);
          else{
            pushMatrix();
@@ -181,11 +184,12 @@ void drawControlPoly(){
          }
        }
        //println("poly: "+temp.x +" "+ temp.y);
-       if((temp.next != null) && (polyOn == 1)){
+       if((temp.next != null) && (polyOn == 1) && (countOnCurve%(surfaces.get(j).sizeU)!=surfaces.get(j).sizeU-1)){
          line(drawingScale(temp.x, false), drawingScale(temp.y, true),drawingScale(temp.z,true), 
          drawingScale(temp.next.x, false), drawingScale(temp.next.y,true),drawingScale(temp.next.z,true));
        }
        temp = temp.next;
+       countOnCurve++;
      }
      stroke(200);
   }

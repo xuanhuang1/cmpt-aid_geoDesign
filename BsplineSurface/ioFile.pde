@@ -94,7 +94,7 @@ int addControlPoints(String[] lines, int i, int currentSurface, int polyCount){
   int lineCount = polyCount;
   println("start points");
   for (int j = 0 ; j < lineCount; j++) {
-    if(lines[i+j].charAt(0) == '#'){
+    if(linetoskip(lines[i+j]) == true){
        lineCount ++; 
     }else{
       Scanner scannerIn = new Scanner(lines[i+j]);
