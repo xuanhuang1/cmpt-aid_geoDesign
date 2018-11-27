@@ -57,7 +57,7 @@ xyzPair ctAlgo(float tu, float tv, LL curve){
     xyzPair res1 = new xyzPair(0,0,0);
     for(int m=Ju-ku; m<Ju+1;m++){
       float B = getBasis(tu,m,ku,curve.u);
-      //println(t, "getJ",J+" B_"+m+"^"+k,B);
+      //println(tu, "getJ",Ju+" B_"+m+"^"+ku,B);
       if(B == 0) continue;
       res1.x += points[n*curve.sizeU+m].x*B;
       res1.y += points[n*curve.sizeU+m].y*B;

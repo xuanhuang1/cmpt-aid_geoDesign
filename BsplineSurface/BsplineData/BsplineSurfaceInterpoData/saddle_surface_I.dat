@@ -1,0 +1,20 @@
+#A saddle surface
+#Number of curves, degree of curves, number of control points
+3 2 3
+#knot vector for u
+0.00 0.00 0.00 1.00 1.00 1.00 
+
+# Following is the control mesh
+# one control point to a line in row order
+-1.056   0.953   0.000
+-0.048   0.035   0.000
+1.008   0.868   0.000
+
+-1.944   3.047   1.000
+-0.072   1.758   1.000
+1.992   3.132   1.000
+
+-1.056   0.953   2.000
+-0.048   0.035   2.000
+1.008   0.868   2.000
+

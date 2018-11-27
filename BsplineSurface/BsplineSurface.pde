@@ -2,6 +2,7 @@ import controlP5.*;
 import java.util.*;
 import java.io.File;
 import java.io.FilenameFilter;
+import peasy.*;
 
 ArrayList<LL> surfaces = new ArrayList<LL>();
 String modes[] = {"move", "delete", "3D view"}; 
@@ -12,6 +13,7 @@ int gridNum = 50;
 int gridResolution = 5;
 int ctrlOn=1, polyOn=1, bCurveOn=1;
 float[] cameraAttr = {PI/4.0, width/30.0, width*2,  0,0,0, 0,1,0};
+PeasyCam cam;
 
 void setup(){
   size(1200, 800, P3D);
@@ -56,36 +58,21 @@ void setup(){
      .addItems(listOfFiles)
      .setType(ScrollableList.LIST);
      
- cp5.addScrollableList("modeOption")
-     .setPosition(width-220, 160)
-     .setSize(200, 100)
-     .setBarHeight(20)
-     .setItemHeight(20)
-     .addItems(modes)
-     .setType(ScrollableList.LIST);
      
      
- /*float l1 = getBasis(0.3, 0, 3, new float[] {0,0,0,0,1,1,1,1});
- float l2 = getBasis(0.3, 1, 3, new float[] {0,0,0,0,1,1,1,1});
- float l3 = getBasis(0.3, 2, 3, new float[] {0,0,0,0,1,1,1,1});
- float l4 = getBasis(0.3, 3, 3, new float[] {0,0,0,0,1,1,1,1});
- println(l1,l2,l3,l4);*/
+  cam = new PeasyCam(this, 100);
+  cam.setMinimumDistance(10);
+  cam.setMaximumDistance(500);
 }
 void draw(){  
   background(255);
   // move origin to center
-  if(currentMode == 2){
-  camera(cos(cameraAttr[0])*cameraAttr[2],cameraAttr[1], sin(cameraAttr[0])*cameraAttr[2], 
-      cameraAttr[3],cameraAttr[4],cameraAttr[5],
-      cameraAttr[6],cameraAttr[7],cameraAttr[8]);
-  }
-  else camera();
+  if(currentMode != 2)
+    camera();
+  
   pushMatrix();
   if(currentMode != 2)
     translate(width/2, height/2);
-  //rotateX(PI/8);
-  //rotateY(PI/8);
-  //box(100);
   stroke(200,0,0);
   line(-width/2,0, width/2, 0);
   stroke(0,200,0);
@@ -120,12 +107,14 @@ void drawSurfacePoints(){
       int stepCounts = gridNum*gridResolution;
       float maxU = surfaces.get(i).u[surfaces.get(i).u.length-surfaces.get(i).degreeU-1];
       float maxV = surfaces.get(i).v[surfaces.get(i).v.length-surfaces.get(i).degreeV-1];
+      float minU = surfaces.get(i).u[surfaces.get(i).degreeU];
+      float minV = surfaces.get(i).v[surfaces.get(i).degreeV];
       for (int j = 0 ; j < stepCounts; j++) {
-        float tu1 = j/(stepCounts+0.0)*maxU;
-        float tu2 = (j+1)/(stepCounts+0.0)*maxU;
+        float tu1 = j/(stepCounts+0.0)*(maxU-minU)+minU;
+        float tu2 = (j+1)/(stepCounts+0.0)*(maxU-minU)+minU;
         for (int k = 0 ; k < stepCounts; k++) {
-          float tv1 = k/(stepCounts+0.0)*maxV;
-          float tv2 = (k+1)/(stepCounts+0.0)*maxV;
+          float tv1 = k/(stepCounts+0.0)*(maxV-minV)+minV;
+          float tv2 = (k+1)/(stepCounts+0.0)*(maxV-minV)+minV;
           xyzPair thePoint1 = pointOnCurve(tu1,tv1, i);
           xyzPair thePoint2 = pointOnCurve(tu2,tv1, i);
           xyzPair thePoint3 = pointOnCurve(tu1,tv2, i);
@@ -166,6 +155,7 @@ void drawControlPoly(){
     
   for (int j = 0 ; j < surfaces.size(); j++) {
      Node temp = surfaces.get(j).head;
+     Node tempRightEdgeTail = surfaces.get(j).head;
      stroke(200);
      if(j == currentCurve) stroke(0,255,0);
      //println("in curve "+j);
@@ -187,6 +177,11 @@ void drawControlPoly(){
        if((temp.next != null) && (polyOn == 1) && (countOnCurve%(surfaces.get(j).sizeU)!=surfaces.get(j).sizeU-1)){
          line(drawingScale(temp.x, false), drawingScale(temp.y, true),drawingScale(temp.z,true), 
          drawingScale(temp.next.x, false), drawingScale(temp.next.y,true),drawingScale(temp.next.z,true));
+       }
+       if(countOnCurve > surfaces.get(j).sizeU-1){
+         line(drawingScale(temp.x, false), drawingScale(temp.y, true),drawingScale(temp.z,true), 
+         drawingScale(tempRightEdgeTail.x, false), drawingScale(tempRightEdgeTail.y,true),drawingScale(tempRightEdgeTail.z,true));
+         tempRightEdgeTail = tempRightEdgeTail.next;
        }
        temp = temp.next;
        countOnCurve++;

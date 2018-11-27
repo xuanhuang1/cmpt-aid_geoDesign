@@ -63,6 +63,11 @@ int readFile(String fileName){
   return 1;
 }
 
+int readFileInterpo(String filename){
+  println("interpo: "+filename);
+  return 1;
+}
+
 int writeFile(){
   String wrtName = "xuanhuang_"+writeCount+"_outfile.dat";
   println("writing to "+wrtName);

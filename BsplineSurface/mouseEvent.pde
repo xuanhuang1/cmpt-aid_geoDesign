@@ -5,19 +5,14 @@ boolean addingNewCurve = false;
 void dropdown(int n) {
   /* request the selected item based on index n */
   String name  = cp5.get(ScrollableList.class, "dropdown").getItem(n).get("name").toString();
-  println(n, name);
 
-  if(name.toLowerCase().endsWith(".dat") || name.toLowerCase().endsWith(".txt"))
+  String folderName = split(name, '/')[0];
+  println(n,"folder=", folderName, name);
+  
+  if(folderName.equals("BsplineSurfaceInterpoData"))
+    readFileInterpo("BsplineData/"+name);
+  else if(folderName.equals("BsplineSurfaceData"))
     readFile("BsplineData/"+name);
-  /* here an item is stored as a Map  with the following key-value pairs:
-   * name, the given name of the item
-   * text, the given text of the item by default the same as name
-   * value, the given value of the item, can be changed by using .getItem(n).put("value", "abc"); a value here is of type Object therefore can be anything
-   * color, the given color of the item, how to change, see below
-   * view, a customizable view, is of type CDrawable 
-   */
-   //for(int i=0; i<surfaces.size(); i++)
-   //  surfaces.get(i).printList();
 }
 
 void modeOption(int n) {
@@ -84,29 +79,12 @@ void keyPressed() {
   if(key == 'w'){
     writeFile();
   }
-  
-  if (key == CODED) {
-    if (keyCode == SHIFT){
+  if (key == TAB){
       if(currentMode == 2)
         currentMode = 0;
       else currentMode = 2;
-      return;
-    }
-    if(currentMode != 2) return;
-    if (keyCode == LEFT) {
-      cameraAttr[0] = (cameraAttr[0] + PI/10.0)%TWO_PI;
-    } else if (keyCode == RIGHT) {
-      cameraAttr[0] = (cameraAttr[0] - PI/10.0+TWO_PI)%TWO_PI;
-    } else if (keyCode == DOWN) {
-      cameraAttr[1] += cameraAttr[2]/30.0;
-      cameraAttr[4] += cameraAttr[2]/30.0;
-    } else if (keyCode == UP) {
-      cameraAttr[1] -= cameraAttr[2]/30.0;
-      cameraAttr[4] -= cameraAttr[2]/30.0;
-    }
-  } else {
-    //fillVal = 126;
   }
+  
   
 }
 
