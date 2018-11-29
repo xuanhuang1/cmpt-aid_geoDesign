@@ -29,3 +29,10 @@ float[] decreT(float []t, int degree, int ctrlPs){
   //println(newItems);
   return newItems;
 }
+
+float getNodalAtIndex(float[] t, int i, int degree){
+  float ret = 0;
+  for(int j=0;j<degree;j++)
+     ret += t[i+j+1]/degree;
+  return ret;
+}
