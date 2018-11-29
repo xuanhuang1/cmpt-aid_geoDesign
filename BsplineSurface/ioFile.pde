@@ -63,8 +63,44 @@ int readFile(String fileName){
   return 1;
 }
 
-int readFileInterpo(String filename){
-  println("interpo: "+filename);
+int readFileInterpo(String fileName){
+  println("interpo: "+fileName);
+  String[] lines = loadStrings(fileName);
+  if(lines.length < 1){
+     println(fileName+" can't load");
+     return 0;
+  }
+  println("reading:"+fileName);
+  int i = 0;
+  while(linetoskip(lines[i])){
+    i++;
+  }
+  Scanner scanner_first = new Scanner(lines[i]);
+  int curveCount = scanner_first.nextInt();
+  int degree = scanner_first.nextInt();
+  int contrlPts = scanner_first.nextInt();
+  scanner_first.close();
+  i++;
+  println("there are    " + curveCount + " curve    of degree",degree, "   with   ",contrlPts,"control points");
+  int currentSurface = surfaces.size();
+  surfaces.add(new LL());
+  surfaces.get(currentSurface).degreeU = degree;
+  surfaces.get(currentSurface).sizeV = curveCount;
+  surfaces.get(currentSurface).sizeU = contrlPts;
+  
+  while(i < lines.length){
+    if(linetoskip(lines[i]) == false){
+      if(surfaces.get(currentSurface).u == null){
+        getKVector(lines[i], currentSurface, surfaces.get(currentSurface).degreeU, degree+contrlPts+1, true);
+      }else {
+        println("There should be "+ surfaces.get(currentSurface).sizeU,"x",surfaces.get(currentSurface).sizeV+" points");
+        i += addControlPoints(lines, i, currentSurface, surfaces.get(currentSurface).sizeU*surfaces.get(currentSurface).sizeV);
+      }
+    }//else{println("empty:"+i);}
+    i++;
+
+  }
+  
   return 1;
 }
 
@@ -100,6 +136,7 @@ int addControlPoints(String[] lines, int i, int currentSurface, int polyCount){
   println("start points");
   for (int j = 0 ; j < lineCount; j++) {
     if(linetoskip(lines[i+j]) == true){
+       println();
        lineCount ++; 
     }else{
       Scanner scannerIn = new Scanner(lines[i+j]);

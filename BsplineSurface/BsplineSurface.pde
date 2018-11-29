@@ -80,7 +80,7 @@ void draw(){
   stroke(0,0,200);
   line(0,0,-400,0, 0,30);
   stroke(100);
-  displaySurface();
+  //displaySurface();
   //println();
   popMatrix();
   
