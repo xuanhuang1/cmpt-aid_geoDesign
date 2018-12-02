@@ -54,6 +54,7 @@ int readFile(String fileName){
         i += addControlPoints(lines, i, currentSurface, surfaces.get(currentSurface).sizeU*surfaces.get(currentSurface).sizeV);
         lengthU = -1;
         lengthV = -1;
+        currentSurface++;
     }
     }//else{println("empty:"+i);}
     i++;
@@ -123,15 +124,31 @@ int writeFile(){
       output += surfaces.get(i).v[j]+" ";
     output += ",";
     Node temp = surfaces.get(i).head;
+    
+    /*int r = 10;
+    float zval = -10;
+    float theta = 0;
+    for(int j=0;j<surfaces.get(i).sizeU;j++){
+      for(int k=0;k<surfaces.get(i).sizeV;k++){
+        if(k==0) zval+= 3;
+        output += r*sin(theta) + " "+ zval+ " "+ r*cos(theta) +" ,";
+        theta = (theta+TWO_PI/(surfaces.get(i).sizeU))%TWO_PI;
+        print(theta," ");
+      }
+    }*/
+    int countCurve = 0;
     while(temp != null){
+      if(countCurve%surfaces.get(i).sizeU == 0) output+=",#curve "+countCurve/surfaces.get(i).sizeU+",";
       output += temp.x + " "+ temp.y+ " "+ temp.z +" ,";
+      countCurve++;
       temp = temp.next;
     }
   }
   String[] list = split(output, ',');
   writeCount+=1;
   
-  saveStrings("BsplineData/fitting_result/"+wrtName, list);
+  saveStrings("BsplineData/write_result/"+wrtName, list);
+  
   return 1;
 }
 

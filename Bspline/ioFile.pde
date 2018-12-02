@@ -75,7 +75,7 @@ int writeFile(){
     output += curves.get(i).size+" ,";
     Node temp = curves.get(i).head;
     while(temp != null){
-      output += temp.x + " "+ temp.y +" ,";
+      output += temp.x + " "+ temp.y +" 0 ,";
       temp = temp.next;
     }
     output += "1 ,";

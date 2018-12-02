@@ -80,6 +80,10 @@ void keyPressed() {
     nodalOn = 0;
   }
   
+  if(key == 'f')
+    flip();
+  if(key == 'y')
+    ySymetric();
   
   
   if(key == 'w'){
