@@ -2,7 +2,7 @@ class LL{
   Node head, tail;
   float[] u ,v , t; 
   int size, sizeU, sizeV, degree, degreeU, degreeV;
-  boolean is3D;
+  boolean isFitting;
   
   LL(){
     head = null;
@@ -10,7 +10,7 @@ class LL{
     size = 0;
     sizeU = -1;
     sizeV = -1;
-    is3D = false;
+    isFitting = false;
     degree = -1;
     degreeU = -1;
     degreeV = -1;
@@ -87,7 +87,7 @@ class LL{
         print("("+temp.x+" "+temp.y+" "+temp.z+") ");
         temp = temp.next;  
       }
-    println("totol size:", this.size,"is 3D?", this.is3D);
+    println("totol size:", this.size,"is isFitting?", this.isFitting);
   }
   
   void printT(){

@@ -98,9 +98,12 @@ int readFileInterpo(String fileName){
       }
     }//else{println("empty:"+i);}
     i++;
-
   }
-  
+  surfaces.get(currentSurface).degreeV = 1;
+  float[] vt = new float[curveCount+1+1];
+  fillInModifiedOpenKnotV(vt, 1, curveCount);
+  surfaces.get(currentSurface).v = vt;
+  surfaces.get(currentSurface).isFitting = true;
   return 1;
 }
 
@@ -143,7 +146,6 @@ int addControlPoints(String[] lines, int i, int currentSurface, int polyCount){
       float theX = scannerIn.nextFloat();
       float theY = scannerIn.nextFloat();
       float theZ = scannerIn.nextFloat();
-      surfaces.get(currentSurface).is3D = true;
       
       scannerIn.close();
       surfaces.get(currentSurface).add(theX, theY, theZ);

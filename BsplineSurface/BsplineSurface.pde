@@ -80,7 +80,7 @@ void draw(){
   stroke(0,0,200);
   line(0,0,-400,0, 0,30);
   stroke(100);
-  //displaySurface();
+  displaySurface();
   //println();
   popMatrix();
   
@@ -94,9 +94,12 @@ void draw(){
 void displaySurface(){
   if(surfaces.size() > 0){
     drawControlPoly();
+    
     drawSurface();
-    drawSurfaceNodal();
-    drawSurfaceKnot();
+    //drawSurfaceNodal();
+    //drawSurfaceKnot();
+    
+    drawDataCurve();
   }
 }
 
@@ -246,7 +249,32 @@ void drawBetweenKnots(float tu1, float tu2, float tv1, float tv2, int resolution
     drawLinePiece(thePoint1, thePoint2);
   }
 }
-
+void drawDataCurve(){
+  for (int i = 0 ; i < surfaces.size(); i++) {
+    if(surfaces.get(i).size > 0){
+      stroke(100);
+      
+      float [] us = new float[surfaces.get(i).sizeU*3];
+      float [] vs = new float[surfaces.get(i).sizeV*3];
+      float maxU = surfaces.get(i).u[surfaces.get(i).u.length-surfaces.get(i).degreeU-1];
+      float maxV = surfaces.get(i).v[surfaces.get(i).v.length-surfaces.get(i).degreeV-1];
+      float minU = surfaces.get(i).u[surfaces.get(i).degreeU];
+      float minV = surfaces.get(i).v[surfaces.get(i).degreeV];
+      
+      for (int j = 0 ; j < us.length; j++) {
+        us[j] = j/(us.length-1.0)*(maxU-minU)+minU;
+      }
+      for (int j = 0 ; j < vs.length; j++) 
+        vs[j] = j/(vs.length-1.0)*(maxV-minV)+minV;
+      
+      for (int j = 0 ; j < us.length-1; j++)
+        for (int k = 0 ; k < vs.length; k++)
+            drawBetweenKnots(us[j], us[j+1], vs[k], vs[k], gridResolution, i);
+     
+      stroke(100);
+    }
+  }
+}
 
 void drawControlPoly(){
   if((currentMode == 0) || (currentMode == 1))
@@ -255,6 +283,7 @@ void drawControlPoly(){
   if(currentMode == 0)
     displayActionEdgeNode();
     
+  if(polyOn == 0) return;
   //println(surfaces.size());
     
   for (int j = 0 ; j < surfaces.size(); j++) {
