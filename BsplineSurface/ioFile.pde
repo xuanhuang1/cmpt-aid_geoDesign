@@ -114,15 +114,19 @@ int writeFile(){
   output += "#written data ,";
   output += surfaces.size()+" ,";
   for(int i=0;i<surfaces.size();i++){
-    output += surfaces.get(i).degree+" ,";
-    output += surfaces.get(i).size+" ,";
+    output += surfaces.get(i).degreeU + " "+surfaces.get(i).degreeV+" ,#u v length,";
+    output += surfaces.get(i).u.length + " "+surfaces.get(i).v.length+" ,#u vec,";
+    for(int j=0;j<surfaces.get(i).u.length;j++)
+      output += surfaces.get(i).u[j]+" ";
+    output += ",#v vec,";
+    for(int j=0;j<surfaces.get(i).v.length;j++)
+      output += surfaces.get(i).v[j]+" ";
+    output += ",";
     Node temp = surfaces.get(i).head;
     while(temp != null){
-      output += temp.x + " "+ temp.y +" ,";
+      output += temp.x + " "+ temp.y+ " "+ temp.z +" ,";
       temp = temp.next;
     }
-    output += "1 ,";
-    output += surfaces.get(i).getTString() + ",";
   }
   String[] list = split(output, ',');
   writeCount+=1;

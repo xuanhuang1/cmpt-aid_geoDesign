@@ -9,9 +9,11 @@ void dropdown(int n) {
   String folderName = split(name, '/')[0];
   println(n,"folder=", folderName, name);
   
-  if(folderName.equals("BsplineSurfaceInterpoData"))
+  if(folderName.equals("bsplinesurfdata"))
     readFileInterpo("BsplineData/"+name);
-  else if(folderName.equals("BsplineSurfaceData"))
+  else if(folderName.equals("bsplinesurfaces"))
+    readFile("BsplineData/"+name);
+  else if(folderName.equals("write_result"))
     readFile("BsplineData/"+name);
 }
 
@@ -53,25 +55,29 @@ void keyPressed() {
     bCurveOn = 1-bCurveOn;
   if (key == 'c') 
     ctrlOn = 1-ctrlOn;
+  
+  if(key == 'k')
+     knotOn=1-knotOn;
+  if(key == 'd')    
+    dataCurveOn =1-dataCurveOn;
+  if(key == 'n') 
+    nodalOn=1-nodalOn;
+  
   if (key == 'a'){
     ctrlOn = 1;
     bCurveOn = 1;
     polyOn = 1;
+    knotOn = 1;
+    dataCurveOn = 1;
+    nodalOn = 1;
   }
-  if (key == 'n'){
+  if (key == 'm'){
     ctrlOn = 0;
     bCurveOn = 0;
     polyOn = 0;
-  }
-  if (key == 'i'){
-    if(currentMode == 2){
-      cameraAttr[2] -= 10;
-      if(cameraAttr[2] < 10) cameraAttr[0] = 10;
-    }
-  }
-  if (key == 'o'){
-    if(currentMode == 2)
-      cameraAttr[2] += 10;
+    knotOn = 0;
+    dataCurveOn = 0;
+    nodalOn = 0;
   }
   
   

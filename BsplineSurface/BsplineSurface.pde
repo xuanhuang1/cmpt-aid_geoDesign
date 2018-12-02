@@ -11,8 +11,7 @@ int currentCurve = -1;
 ControlP5 cp5; // you always need the main class
 int gridNum = 50;
 int gridResolution = 5;
-int ctrlOn=1, polyOn=1, bCurveOn=1;
-float[] cameraAttr = {PI/4.0, width/30.0, width*2,  0,0,0, 0,1,0};
+int ctrlOn=1, polyOn=1, bCurveOn=1, nodalOn=1, knotOn=1, dataCurveOn =1;
 PeasyCam cam;
 
 void setup(){
@@ -21,9 +20,9 @@ void setup(){
   stroke(100);
   noFill();
   
-  File[] folders = {new File(sketchPath()+"/BsplineData/BsplineSurfaceData"),
-                    new File(sketchPath()+"/BsplineData/BsplineSurfaceInterpoData"),
-                    new File(sketchPath()+"/BsplineData/fitting_result")};
+  File[] folders = {new File(sketchPath()+"/BsplineData/bsplinesurfaces"),
+                    new File(sketchPath()+"/BsplineData/bsplinesurfdata"),
+                    new File(sketchPath()+"/BsplineData/write_result")};
                     
   File[][] files= new File[folders.length][];
   int filesLen = 0;
@@ -96,10 +95,9 @@ void displaySurface(){
     drawControlPoly();
     
     drawSurface();
-    //drawSurfaceNodal();
-    //drawSurfaceKnot();
-    
-    drawDataCurve();
+    if(nodalOn == 1) drawSurfaceNodal();
+    if(knotOn == 1) drawSurfaceKnot();
+    if(dataCurveOn == 1) drawDataCurve();
   }
 }
 
@@ -214,6 +212,11 @@ void drawSurfaceNodal(){
       
       float [] us = new float[surfaces.get(i).sizeU];
       float [] vs = new float[surfaces.get(i).sizeV];
+      float maxU = surfaces.get(i).u[surfaces.get(i).u.length-surfaces.get(i).degreeU-1];
+      float maxV = surfaces.get(i).v[surfaces.get(i).v.length-surfaces.get(i).degreeV-1];
+      float minU = surfaces.get(i).u[surfaces.get(i).degreeU];
+      float minV = surfaces.get(i).v[surfaces.get(i).degreeV];
+      
       for (int j = 0 ; j < us.length; j++) {
         us[j] = getNodalAtIndex(surfaces.get(i).u, j, surfaces.get(i).degreeU);
         //print(us[j],"");
@@ -223,12 +226,20 @@ void drawSurfaceNodal(){
         //print(vs[j],"");
       }
       
-      for (int j = 0 ; j < us.length-1; j++)
-        for (int k = 0 ; k < vs.length; k++)
+      for (int j = 0 ; j < us.length-1; j++){
+        for (int k = 0 ; k < vs.length; k++){
+          if(((us[j] < minU)== false) && ((us[j+1] > maxU)==false) 
+          && ((vs[k] < minV)== false) && ((vs[k] > maxV)==false) )
             drawBetweenKnots(us[j], us[j+1], vs[k], vs[k], gridResolution, i);
-      for (int j = 0 ; j < vs.length-1; j++)
-        for (int k = 0 ; k < us.length; k++)
+        }
+      }
+      for (int j = 0 ; j < vs.length-1; j++){
+        for (int k = 0 ; k < us.length; k++){
+          if(((us[k] < minU)== false) && ((us[k] > maxU)==false) 
+          && ((vs[j] < minV)== false) && ((vs[j+1] > maxV)==false) )
             drawBetweenKnots(us[k], us[k],vs[j], vs[j+1], gridResolution, i);
+        }
+      }
      
       stroke(0);
     }
@@ -253,7 +264,7 @@ void drawDataCurve(){
   for (int i = 0 ; i < surfaces.size(); i++) {
     if(surfaces.get(i).size > 0){
       stroke(100);
-      
+      if(surfaces.get(i).isFitting == false) continue;
       float [] us = new float[surfaces.get(i).sizeU*3];
       float [] vs = new float[surfaces.get(i).sizeV*3];
       float maxU = surfaces.get(i).u[surfaces.get(i).u.length-surfaces.get(i).degreeU-1];
